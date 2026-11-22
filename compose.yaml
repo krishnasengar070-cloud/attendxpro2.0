@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: attendx
+      POSTGRES_USER: attendx_migrate
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run node scripts/configure-dev.mjs first}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Run node scripts/configure-dev.mjs first}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - attendx_database:/var/lib/postgresql/data
+      - ./deploy/postgres-init.sh:/docker-entrypoint-initdb.d/10-runtime-role.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U attendx_migrate -d attendx"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  mail:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+volumes:
+  attendx_database:

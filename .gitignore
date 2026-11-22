@@ -1,0 +1,8 @@
+/node_modules/
+.next/
+.env
+.env.local
+.attendx/
+generated/
+test-results/
+*.tsbuildinfo
